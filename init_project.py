@@ -36,7 +36,7 @@ def setup_node_project(folder_path):
     except:
         console.print("[+] Error: Unable to find npm. Exiting!", style="error")
         
-    subprocess.run([r"C:\Program Files\nodejs\npm.cmd", "install"] + dependencies, check=True) #to make better 
+    subprocess.run([r"C:\Program Files\nodejs\npm.cmd", "install"] + dependencies, check=True)
     console.print("[+] Installed successfully!", style="success")
     # Update package.json with npm scripts
     package_json_path = os.path.join(folder_path, "package.json")
@@ -96,6 +96,31 @@ module.exports = app;"""
         file.write(appjs)
     console.print("[+] app.js successfully added!", style="success")
 
+def setup_indexjs(path):
+    """Checks if there's code between the predefined section markers and updates if empty."""
+    path = os.path.join(path, "index.js")
+    if not os.path.exists(path):
+        console.print(f"[+]Error: The file '{path}' does not exist.", style="error")
+        return
+    indexjs = """//////////////////////////////////////////////////////
+// INCLUDES
+//////////////////////////////////////////////////////
+const app = require('./src/app');
+
+//////////////////////////////////////////////////////
+// SETUP ENVIRONMENT
+//////////////////////////////////////////////////////
+const PORT = 3000;
+
+//////////////////////////////////////////////////////
+// START SERVER
+//////////////////////////////////////////////////////
+app.listen(PORT,()=> {
+    console.log(`App listening to port ${PORT}`);
+});"""
+    with open(path, "w") as file:
+        file.write(indexjs)
+    console.print("[+] index.js successfully added!", style="success")
 
 if __name__ == "__main__":
     if len(sys.argv) != 2:
@@ -106,4 +131,5 @@ if __name__ == "__main__":
         os.chdir(folder_path)
 
         setup_appjs(folder_path)
+        setup_indexjs(folder_path)
         setup_node_project(folder_path)
